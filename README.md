@@ -1,2 +1,2 @@
-# AttendenceTracker
-Attendence Tracker
+# Attendance Tracker
+Attendance Tracker
