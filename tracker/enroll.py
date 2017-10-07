@@ -31,19 +31,24 @@ def gen_password(length=8):
 def enroll(ssid, password, interface="wlan1"):
 
     conf = hostapd_conf_template.format(interface=interface,
-                                       ssid=ssid,
-                                       password=password)
+                                       ssid=ssid.encode('utf8'),
+                                       password=password.encode('utf8'))
 
     hostapd_conf = tempfile.NamedTemporaryFile()
     hostapd_conf.write(conf)
     hostapd_conf.flush()
 
 
-    hostapd = subprocess.Popen(['hostapd', '-d',hostapd_conf.name])
+    hostapd = subprocess.Popen(['hostapd', hostapd_conf.name])
     running = True
-    mac = None
+    final_mac = False
+    start_time = time.time()
     while running:
         if hostapd.poll() != None:
+            running = False
+        # timeout
+        print("Waiting", time.time() - start_time)
+        if time.time() - start_time > 60:
             running = False
         try:
             stas = subprocess.check_output("hostapd_cli all_sta | grep dot11RSNAStatsSTAAddress", shell=True).strip()
@@ -65,9 +70,10 @@ def enroll(ssid, password, interface="wlan1"):
                 print("connected, killing")
                 hostapd.send_signal(2)
                 running = False
+                final_mac = mac
         time.sleep(1)
     hostapd_conf.close()
-    return mac
+    return final_mac
 
 if __name__ == '__main__':
     password = gen_password()
