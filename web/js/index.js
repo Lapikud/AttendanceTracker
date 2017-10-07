@@ -9,9 +9,21 @@ var students = {
     "40:0e:85:f7:b5:4f": {name:"Kristjan Kool"},
     "2c:f0:a2:c3:af:b8": {name:"Berta Härsing"}
 }
+var temp = JSON.stringify(students);
+var studentJSON = [
+    {mac: "84:c7:ea:3f:7f:42", name: "Arti Zirk"},
+    {mac: "40:4e:36:5d:d5:47", name: "Kertu Pikk"},
+    {mac: "04:4b:ed:0e:cd:ae", name: "Sigrid Kirss"},
+    {mac: "78:00:9e:d1:59:ba", name: "Silver Valdvee"},
+    {mac: "d0:87:e2:a1:04:e5", name: "Artur Salus"},
+    {mac: "cc:9f:7a:2a:1b:db", name: "Alo Avi"},
+    {mac: "40:0e:85:f7:b5:4f", name: "Kristjan Kool"},
+    {mac: "2c:f0:a2:c3:af:b8", name: "Berta Härsing"}
+    ];
 
 
 class App {
+  
 
     constructor(serverUrl) {
         this.setupBinding();
@@ -21,19 +33,32 @@ class App {
     }
 
     setupBinding() {
-        this.logEl = document.getElementById("log");
-        this.clearEl = document.getElementById("clear");
-        this.clearEl.addEventListener("click", event => this.clear(event));
-        this.studentsEl = document.getElementById("students");
-        for (let mac in students) {
-            let student = students[mac];
-            let el = document.createElement('div');
-            student.el = el;
-            el.style.color = 'red';
-            let name = document.createTextNode(student.name);
-            el.appendChild(name);
-            this.studentsEl.appendChild(el);
-        }
+      this.logEl = document.getElementById("log");
+      this.clearEl = document.getElementById("clear");
+      this.clearEl.addEventListener("click", event => this.clear(event));
+      this.studentsEl = document.getElementById("students");
+      for (let mac in students) {
+          let student = students[mac];
+          let el = document.createElement('div');
+          student.el = el;
+          el.style.color = 'red';
+          let name = document.createTextNode(student.name);
+          el.appendChild(name);
+          this.studentsEl.appendChild(el);
+      }
+      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Tardy</button><button type="button" class="btn btn-default">Forgot Sign-out</button></div>';
+      var obj = studentJSON;
+      var globalCounter = 0;
+      var tbody = document.getElementById('tbody');
+
+      for (var i = 0; i < obj.length; i++) {
+          var tr = "<tr>";
+
+          tr += "<td>" + obj[i].name + "</td>" + "<td>" + buttons + "</td></tr>";
+
+          /* We add the table row to the table body */
+          tbody.innerHTML += tr;
+      }
     }
 
     setupConnection(serverUrl) {
