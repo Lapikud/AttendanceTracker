@@ -36,6 +36,7 @@ def main_route():
         for person in cur.fetchall():
             name = person[0]
             mac = person[1]
+
             people.append({"name": name, "mac": mac})
         return json.dumps(people)
 
