@@ -9,7 +9,6 @@ var students = {
     "40:0e:85:f7:b5:4f": {name:"Kristjan Kool"},
     "2c:f0:a2:c3:af:b8": {name:"Berta Härsing"}
 }
-var temp = JSON.stringify(students);
 var studentJSON = [
     {mac: "84:c7:ea:3f:7f:42", name: "Arti Zirk"},
     {mac: "40:4e:36:5d:d5:47", name: "Kertu Pikk"},
@@ -46,7 +45,7 @@ class App {
           el.appendChild(name);
           this.studentsEl.appendChild(el);
       }
-      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Tardy</button><button type="button" class="btn btn-default">Forgot Sign-out</button></div>';
+      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Late</button></div>';
       var obj = studentJSON;
       var globalCounter = 0;
       var tbody = document.getElementById('tbody');

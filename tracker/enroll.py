@@ -31,15 +31,15 @@ def gen_password(length=8):
 def enroll(ssid, password, interface="wlan1"):
 
     conf = hostapd_conf_template.format(interface=interface,
-                                       ssid=ssid,
-                                       password=password)
+                                       ssid=ssid.encode('utf8'),
+                                       password=password.encode('utf8'))
 
     hostapd_conf = tempfile.NamedTemporaryFile()
     hostapd_conf.write(conf)
     hostapd_conf.flush()
 
 
-    hostapd = subprocess.Popen(['hostapd', '-d',hostapd_conf.name])
+    hostapd = subprocess.Popen(['hostapd', hostapd_conf.name])
     running = True
     mac = None
     while running:
