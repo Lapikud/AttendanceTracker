@@ -1,0 +1,9 @@
+[Unit]
+Description=wifispy
+
+[Service]
+WorkingDirectory=/root/wifispy
+ExecStart=/usr/bin/python wifispy.py
+
+[Install]
+WantedBy=multi-user.target
