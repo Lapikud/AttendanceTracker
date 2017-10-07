@@ -41,9 +41,14 @@ def enroll(ssid, password, interface="wlan1"):
 
     hostapd = subprocess.Popen(['hostapd', hostapd_conf.name])
     running = True
-    mac = None
+    final_mac = False
+    start_time = time.time()
     while running:
         if hostapd.poll() != None:
+            running = False
+        # timeout
+        print("Waiting", time.time() - start_time)
+        if time.time() - start_time > 60:
             running = False
         try:
             stas = subprocess.check_output("hostapd_cli all_sta | grep dot11RSNAStatsSTAAddress", shell=True).strip()
@@ -65,9 +70,10 @@ def enroll(ssid, password, interface="wlan1"):
                 print("connected, killing")
                 hostapd.send_signal(2)
                 running = False
+                final_mac = mac
         time.sleep(1)
     hostapd_conf.close()
-    return mac
+    return final_mac
 
 if __name__ == '__main__':
     password = gen_password()

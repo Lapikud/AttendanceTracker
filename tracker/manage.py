@@ -36,7 +36,10 @@ while running:
                 time.sleep(3)
                 subprocess.call(['systemctl', 'kill', 'wifispy'])
                 mac = enroll.enroll(ssid, password)
-                r = {"result":{"ssid":ssid, "password":password,"mac":mac}}
+                if mac:
+                    r = {"result":{"ssid":ssid, "password":password,"mac":mac}}
+                else:
+                    r = {"error": "Enroll timeout"}
                 ws.send(json.dumps(r))
                 state = 'wifispy'
         else:
