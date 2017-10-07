@@ -20,9 +20,9 @@ import websocket
 
 # linux
 interface = 'wlan1'
-monitor_enable  = 'iwconfig wlan1 mode monitor;'
-monitor_disable = 'iwconfig wlan1 mode managed;'
-change_channel  = 'iw dev wlan1 set channel %s'
+monitor_enable  = 'iwconfig wlan1 mode monitor; ip link set wlan1 up;'
+monitor_disable = 'ip link set wlan1 down; iwconfig wlan1 mode managed; iw dev wlan1 set type managed;'
+change_channel  = 'iwconfig wlan1 channel %s'
 
 channels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] # 2.4GHz only
 
@@ -72,15 +72,15 @@ subtypes_data = {
 }
 
 def start():
-    logging.basicConfig(filename='wifispy.log', format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
     os.system(monitor_enable)
-    #stop_rotating = rotator(channels, change_channel)
+    stop_rotating = rotator(channels, change_channel)
     stop_writing = writer()
     try: sniff(interface)
     except KeyboardInterrupt: sys.exit()
     finally:
         stop_writing.set()
-        #stop_rotating.set()
+        stop_rotating.set()
         os.system(monitor_disable)
 
 def rotator(channels, change_channel):
@@ -99,9 +99,10 @@ def rotator(channels, change_channel):
 def writer():
     def write(stop):
         ws = websocket.WebSocket()
-        ws.connect('ws://iot.wut.ee/p2p/browser/chip')
         while not stop.is_set():
             try:
+                if not ws.connected:
+                    ws.connect('ws://iot.wut.ee/p2p/browser/chip')
                 logging.info('Writing...')
                 for _ in range(0, queue.qsize()):
                     item = queue.get_nowait()
@@ -109,6 +110,13 @@ def writer():
                 time.sleep(1) # seconds
             except Queue.Empty: pass
             except KeyboardInterrupt: pass
+            except IOError as e:
+                print("Websocket has died! Reconnecting")
+                try:
+                    ws.close()
+                except Exception as e:
+                    print("Close failed")
+                    print(e)
     stop = multiprocessing.Event()
     multiprocessing.Process(target=write, args=[stop]).start()
     return stop
