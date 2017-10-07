@@ -45,7 +45,7 @@ class App {
           el.appendChild(name);
           this.studentsEl.appendChild(el);
       }
-      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Tardy</button><button type="button" class="btn btn-default">Forgot Sign-out</button></div>';
+      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Late</button></div>';
       var obj = studentJSON;
       var globalCounter = 0;
       var tbody = document.getElementById('tbody');
