@@ -3,7 +3,7 @@ Description=wifispy
 
 [Service]
 WorkingDirectory=/root/wifispy
-ExecStart=/usr/bin/python wifispy.py
+ExecStart=/usr/bin/python manage.py
 Restart=always
 
 [Install]
