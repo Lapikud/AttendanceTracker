@@ -25,8 +25,6 @@ logger_stdout_level=2
 
 interface = "wlan1"
 
-def gen_password(length=8):
-    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(8))
 
 def enroll(ssid, password, interface="wlan1"):
 

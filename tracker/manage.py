@@ -27,6 +27,7 @@ while running:
             params = msg.get('params', {})
             ssid = params.get('ssid')
             password = params.get('password')
+            req_id = params.get("id")
             if not ssid or not password:
                 ws.send(json.dumps({"status":"ssid or password not given"}))
             else:
@@ -37,9 +38,9 @@ while running:
                 subprocess.call(['systemctl', 'kill', 'wifispy'])
                 mac = enroll.enroll(ssid, password)
                 if mac:
-                    r = {"result":{"ssid":ssid, "password":password,"mac":mac}}
+                    r = {"result":{"ssid":ssid, "password":password,"mac":mac, "id":req_id}}
                 else:
-                    r = {"error": "Enroll timeout"}
+                    r = {"error": "Enroll timeout/error", "id":req_id}
                 ws.send(json.dumps(r))
                 state = 'wifispy'
         else:
