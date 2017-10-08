@@ -35,7 +35,7 @@
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="my-status btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
   </div>
 </nav>
@@ -46,22 +46,20 @@
 </table>
 
 <br>
-  <div class="btn-group" data-toggle="buttons">
-    <label class="my-status btn btn-outline-success" id="present" data-hidden="false">
-      <input type="checkbox" autocomplete="off">Present
-    </label>
-    <label class="my-status btn btn-outline-danger" id="absent" data-hidden="true">
-      <input type="checkbox" autocomplete="off">Absent
-    </label>
-    <label class="my-status btn btn-outline-secondary" id="axcuse" data-hidden="false">
-      <input type="checkbox" autocomplete="off">Excused
-    </label>
-    <label class="my-status btn btn-outline-info" id="learly" data-hidden="false">
-      <input type="checkbox" autocomplete="off">Left early
-    </label>
-    <label class="my-status btn btn-outline-warning" id="late" data-hidden="false">
-      <input type="checkbox" autocomplete="off">Late
-    </label>
+  <div class="btn-group" id="demo">
+    <a role="button" class="button-display btn btn-outline-success" data-toggle="button" href='javascript:updateStatus(1, "present");' id="present">Kohal</a>
+    <a role="button" class="button-display btn btn-outline-danger" data-toggle="button" href='javascript:updateStatus(2, "absent");' id="absent">Puudu</a>
+    <a role="button" class="button-display btn btn-outline-secondary" data-toggle="button" href='javascript:updateStatus(3, "excused");' id="excused">Põhjendatud puudumine</a>
+    <a role="button" class="button-display btn btn-outline-warning" data-toggle="button" href='javascript:updateStatus(4, "late");' id="late">Hilineja</a>
+  </div>
+<br>
+ 
+ <br>
+  <div class="btn-group" data-toggle="buttons" id="demo2">
+    <label class="btn btn-outline-success" id="present"><input type="radio" name="flag" id="present" autocomplete="off">Kohal</label>
+    <label class="btn btn-outline-danger active" id="absent"><input type="radio" name="flag" id="absent" autocomplete="off" checked>Puudu</label>
+    <label class="btn btn-outline-secondary" id="excused"><input type="radio" name="flag" id="excused" autocomplete="off">Põhjendatud puudumine</label>
+    <label class="btn btn-outline-warning" id="late"><input type="radio" name="flag" id="late" autocomplete="off">Hilinenud</label>
   </div>
 <br>
 
@@ -90,9 +88,17 @@ document.addEventListener("DOMContentLoaded", Loaded);
 </script>
 
 <script>
-  
-  $('#absent').toggleClass('active', $(this).data( "hidden" ));
-
+  setInterval(function() {
+    if($('#demo > #absent').hasClass("active"))
+    {
+      $('#demo > #absent').button('toggle');
+    }
+    
+    if($('#demo2 > #absent').hasClass("active"))
+    {
+      $('#demo2 > #present').button('toggle');
+    }
+  }, 1000); // every 1000 ms 
 </script>
 
 </body>

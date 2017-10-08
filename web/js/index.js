@@ -42,7 +42,7 @@ function buttonGroupBuilder(flag){
   var buttons = "";
   for(var i=0; i< flags.length; i++)
     if(flag==flags[i]) buttons += buttonBuilder(flagsToString[flag], flag)
-    else buttons += buttonBuilder(flagsToString[flag])
+    else buttons += buttonBuilder(flagsToString[flags[i]])
   return buttons;
 }
 
@@ -84,7 +84,7 @@ class App {
       for (var i = 0; i < obj.length; i++) {
           var tr = "<tr>";
 
-          tr += "<td>" + obj[i].name + "</td><td><div class='btn-group' data-toggle='buttons'>"+ buttonGroupBuilder(obj[i].flag) +"</div></td></tr>";
+          tr += "<td>" + obj[i].name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i].id+"'>"+ buttonGroupBuilder(obj[i].flag) +"</div></td></tr>";
 
           /* We add the table row to the table body */
           tbody.innerHTML += tr;
