@@ -73,12 +73,25 @@ def update_user_attending():
             print("Connecting WebSocket")
             ws.connect("ws://iot.wut.ee/p2p/lessonsrc/lessondst")
 
-        lesson = Lesson.objects.order_by('start_time').first()
-        print(lesson.start_time, lesson.name)
-        for attender in UserInLesson.objects(lesson=lesson):
-            latest_device = UserDevice.objects(user=attender.user).order_by("mtime").only('mtime').first()
-            if not latest_device:
-                continue
-            print("", latest_device.mtime, attender.user.full_name)
+        lesson = Lesson.objects(start_time__gt=datetime.datetime.now()).order_by('start_time').first()
+        if lesson:
+            print(lesson.start_time, lesson.name)
+            for attender in UserInLesson.objects(lesson=lesson):
+                if attender.override:
+                    continue
+                latest_device = UserDevice.objects(user=attender.user).order_by("mtime").only('mtime').first()
+                if not latest_device:
+                    continue
+                if not latest_device.mtime:
+                    continue
+                if datetime.datetime.now() - latest_device.mtime < datetime.timedelta(minutes=1):
+                    if lesson.started:
+                        attender.flag = "late"
+                    else:
+                        attender.flag = "present"
+                else:
+                    attender.flag = "absent"
+                attender.save()
+                print("", latest_device.mtime, attender.flag, attender.user.full_name)
 
         time.sleep(1)

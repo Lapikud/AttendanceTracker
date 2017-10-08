@@ -60,7 +60,7 @@
 async function Loaded() {
   console.info("Starting App");
   try {
-    let app = new App("ws://iot.wut.ee/p2p/chip/browser");
+    let app = new App("wss://iot.wut.ee/p2p/chip/browser");
     window.app = app;  // for easy debuging
   } catch (e) {
     console.error(e);
