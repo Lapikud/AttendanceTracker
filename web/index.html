@@ -1,71 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
- 
- 
-  <title>Attendance Tracker</title> 
-  <meta charset="utf-8">
-  <meta name=viewport content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script> 
-       
-</head>
-<body>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" href="#">Attendace Tracker JT5000M</a>
+    <title>Attendance Tracker</title>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-toggleable-md navbar-light bg-faded" style="padding-left: 5rem; padding-right: 5rem;">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Attendace Tracker</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav mr-auto" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#classes" role="tab">Classes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#users" role="tab">Students</a>
+            </li>
+          </ul>
+          <div class="navbar-nav">
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Teacher
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="#">Settings</a>
+                <a class="dropdown-item" href="#">Logout</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="https://docs.google.com/presentation/d/1ERY88Whp0eaGA2vqIaOJPBt-DWf37kUXvGc1juli6SU/edit?usp=sharing">Presentation</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <div class="container">
+      <div class="tab-content">
+        <div class="tab-pane active" id="home" role="tabpanel">
+          <h1>Attendance Tracker</h1>
+          <p>Your easy to use student attendance tracker</p>
+        </div>
+        <div class="tab-pane" id="classes" role="tabpanel">
+          <h1>Classes</h1>
+          <div id="classes-list">
+            <a class="nav-item nav-link" data-toggle="tab" href="#students-attending" role="tab">Main pitch rehearsal</a>
+            <a class="nav-item nav-link" data-toggle="tab" href="#students-attending" role="tab">Final pitching, end of the event summary, award ceremony.</a>
+          </div>
+        </div>
+        <div class="tab-pane" id="students-attending" role="tabpanel">
+          <h1>Final pitching, end of the event summary, award ceremony.</h1>
+          <table class="table" style="display:flex; flex-direction: column">
+              <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="tab-pane" id="users" role="tabpanel">
+          all students
+        </div>
+      </div>
 
-<div class="container">
-<table class="table" style="display:flex; flex-direction: column">
-    <tbody id="tbody"></tbody>
-</table>
+      <!-- jQuery first, then Tether, then Bootstrap JS. -->
+      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
-
-
- 
-<script src="/js/index.js"></script>
-</div>
-
-<!-- Boostrap -->
-<script>
-async function Loaded() {
-  console.info("Starting App");
-  try {
-    let app = new App("wss://iot.wut.ee/p2p/chip/browser");
-    window.app = app;  // for easy debuging
-  } catch (e) {
-    console.error(e);
-    alert("App start failed:\n  " + e + "\nPress F12 and check the console!");
-  }
-  console.info("Started App");
-}
-document.addEventListener("DOMContentLoaded", Loaded);
-</script>
-
-</body>
+      <script src="/js/index.js"></script>
+      <!-- Boostrap -->
+      <script>
+      async function Loaded() {
+        console.info("Starting App");
+        try {
+          let app = new App("wss://iot.wut.ee/p2p/chip/browser");
+          window.app = app;  // for easy debuging
+        } catch (e) {
+          console.error(e);
+          alert("App start failed:\n  " + e + "\nPress F12 and check the console!");
+        }
+        console.info("Started App");
+      }
+      document.addEventListener("DOMContentLoaded", Loaded);
+      </script>
+    </div>
+  </body>
 </html>
