@@ -35,7 +35,7 @@
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <button class="my-status btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
   </div>
 </nav>
@@ -47,20 +47,20 @@
 
 <br>
   <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-outline-success" id="present" data-hidden="true">
-      <input type="checkbox" checked autocomplete="off">Present
+    <label class="my-status btn btn-outline-success" id="present" data-hidden="false">
+      <input type="checkbox" autocomplete="off">Present
     </label>
-    <label class="btn btn-outline-danger" id="absent">
-      <input type="checkbox" checked autocomplete="off">Absent
+    <label class="my-status btn btn-outline-danger" id="absent" data-hidden="true">
+      <input type="checkbox" autocomplete="off">Absent
     </label>
-    <label class="btn btn-outline-secondary" id="axcuse">
-      <input type="checkbox" checked autocomplete="off">Excused
+    <label class="my-status btn btn-outline-secondary" id="axcuse" data-hidden="false">
+      <input type="checkbox" autocomplete="off">Excused
     </label>
-    <label class="btn btn-outline-info" id="learly">
-      <input type="checkbox" checked autocomplete="off">Left early
+    <label class="my-status btn btn-outline-info" id="learly" data-hidden="false">
+      <input type="checkbox" autocomplete="off">Left early
     </label>
-    <label class="btn btn-outline-warning" id="late">
-      <input type="checkbox" checked autocomplete="off">Late
+    <label class="my-status btn btn-outline-warning" id="late" data-hidden="false">
+      <input type="checkbox" autocomplete="off">Late
     </label>
   </div>
 <br>
@@ -90,7 +90,9 @@ document.addEventListener("DOMContentLoaded", Loaded);
 </script>
 
 <script>
-  $('#present').toggleClass('active', $('#present').data( "hidden" ) === true);
+  
+  $('#absent').toggleClass('active', $(this).data( "hidden" ));
+
 </script>
 
 </body>

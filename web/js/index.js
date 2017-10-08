@@ -10,16 +10,46 @@ var students = {
     "2c:f0:a2:c3:af:b8": {name:"Berta Härsing"}
 }
 var studentJSON = [
-    {mac: "84:c7:ea:3f:7f:42", name: "Arti Zirk"},
-    {mac: "40:4e:36:5d:d5:47", name: "Kertu Pikk"},
-    {mac: "04:4b:ed:0e:cd:ae", name: "Sigrid Kirss"},
-    {mac: "78:00:9e:d1:59:ba", name: "Silver Valdvee"},
-    {mac: "d0:87:e2:a1:04:e5", name: "Artur Salus"},
-    {mac: "cc:9f:7a:2a:1b:db", name: "Alo Avi"},
-    {mac: "40:0e:85:f7:b5:4f", name: "Kristjan Kool"},
-    {mac: "2c:f0:a2:c3:af:b8", name: "Berta Härsing"}
-    ];
+    {id: "1", name: "Arti Zirk", flag: "A"},
+    {id: "2", name: "Kertu Pikk", flag: "A"},
+    {id: "3", name: "Sigrid Kirss", flag: "A"},
+    {id: "4", name: "Silver Valdvee", flag: "A"},
+    {id: "5", name: "Artur Salus", flag: "A"},
+    {id: "6", name: "Alo Avi", flag: "A"},
+    {id: "7", name: "Kristjan Kool", flag: "A"},
+    {id: "8", name: "Berta Härsing", flag: "A"}
+]
 
+var colorCoding= {
+  present: "success",
+  absent: "danger",
+  excused: "secondary",
+  late: "warning"
+}
+
+var flags=["P", "A", "E", "L"];
+var flagsToString={"P": "Present", "A": "Absent", "E": "Excused", "L": "Late"};
+
+function isActive(bool){
+  if(bool){ 
+          return "active";
+       }else{ 
+         return "";
+       }
+}
+
+function buttonGroupBuilder(flag){
+  var buttons = "";
+  for(var i=0; i< flags.length; i++)
+    if(flag==flags[i]) buttons += buttonBuilder(flagsToString[flag], flag)
+    else buttons += buttonBuilder(flagsToString[flag])
+  return buttons;
+}
+
+function buttonBuilder(choice, flag){
+  var lower_case_choice = choice.toLowerCase();
+  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+"' id='"+lower_case_choice+"' ><input type='checkbox' autocomplete='off'>"+choice+"</label>"
+}
 
 class App {
   
@@ -29,6 +59,7 @@ class App {
         this.setupConnection(serverUrl);
         this.macs = {};
         setInterval(() => {this.updateVisibleMacs()}, 1000);
+        setInterval(() => {this.updateButtonState()}, 1000);
     }
 
     setupBinding() {
@@ -45,7 +76,7 @@ class App {
           el.appendChild(name);
           this.studentsEl.appendChild(el);
       }
-      var buttons ='<div class="btn-group"><button type="button" class="btn btn-default">Present</button><button type="button" class="btn btn-default">Absent</button><button type="button" class="btn btn-default">Excused</button><button type="button" class="btn btn-default">Left early</button><button type="button" class="btn btn-default">Late</button></div>';
+      
       var obj = studentJSON;
       var globalCounter = 0;
       var tbody = document.getElementById('tbody');
@@ -53,7 +84,7 @@ class App {
       for (var i = 0; i < obj.length; i++) {
           var tr = "<tr>";
 
-          tr += "<td>" + obj[i].name + "</td>" + "<td>" + buttons + "</td></tr>";
+          tr += "<td>" + obj[i].name + "</td><td><div class='btn-group' data-toggle='buttons'>"+ buttonGroupBuilder(obj[i].flag) +"</div></td></tr>";
 
           /* We add the table row to the table body */
           tbody.innerHTML += tr;
@@ -103,6 +134,10 @@ class App {
             macs += mac + ' ' + ((date - this.macs[mac]) / 1000).toFixed(1) + '\n';
         }
         this.logEl.value = macs;
+    }
+    
+    updateButtonState() {
+    //to-do
     }
 
 }
