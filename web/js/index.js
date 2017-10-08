@@ -1,24 +1,4 @@
 "use strict";
-var students = {
-    "84:c7:ea:3f:7f:42": {name:"Arti Zirk"},
-    "40:4e:36:5d:d5:47": {name:"Kertu Pikk"},
-    "04:4b:ed:0e:cd:ae": {name:"Sigrid Kirss"},
-    "78:00:9e:d1:59:ba": {name:"Silver Valdvee"},
-    "d0:87:e2:a1:04:e5": {name:"Artur Salus"},
-    "cc:9f:7a:2a:1b:db": {name:"Alo Avi"},
-    "40:0e:85:f7:b5:4f": {name:"Kristjan Kool"},
-    "2c:f0:a2:c3:af:b8": {name:"Berta Härsing"}
-}
-var studentJSON = [
-    {id: "1", name: "Arti Zirk", flag: "L"},
-    {id: "2", name: "Kertu Pikk", flag: "A"},
-    {id: "3", name: "Sigrid Kirss", flag: "A"},
-    {id: "4", name: "Silver Valdvee", flag: "E"},
-    {id: "5", name: "Artur Salus", flag: "A"},
-    {id: "6", name: "Alo Avi", flag: "A"},
-    {id: "7", name: "Kristjan Kool", flag: "A"},
-    {id: "8", name: "Berta Härsing", flag: "L"}
-]
 
 var colorCoding= {
   present: "success",
@@ -84,8 +64,6 @@ class App {
         this.setupBinding();
         this.setupConnection(serverUrl);
         this.macs = {};
-        //setInterval(() => {this.updateVisibleMacs()}, 1000);
-        
         setInterval(() => {this.updateButtonState()}, 1000);
     }
 
