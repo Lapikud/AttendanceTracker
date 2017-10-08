@@ -30,7 +30,7 @@ class UsersResource():
         resp.json = users
 
     def on_post(self, req, resp, user=None):
-        user = User(email=req.json['email'], full_name=req.json['full_name'])
+        user = User(email=req.json.get('email'), full_name=req.json['full_name'])
         user.save()
         resp.status = HTTP_CREATED
 

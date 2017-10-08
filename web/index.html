@@ -52,8 +52,12 @@
         <div class="tab-pane" id="classes" role="tabpanel">
           <h1>Classes</h1>
           <div id="classes-list">
+            <span class="nav-item">
             <a class="nav-item nav-link" data-toggle="tab" href="#students-attending" role="tab">Main pitch rehearsal</a>
+            </span>
+            <span class="nav-item">
             <a class="nav-item nav-link" data-toggle="tab" href="#students-attending" role="tab">Final pitching, end of the event summary, award ceremony.</a>
+            </span>
           </div>
         </div>
         <div class="tab-pane" id="students-attending" role="tabpanel">
@@ -63,7 +67,48 @@
           </table>
         </div>
         <div class="tab-pane" id="users" role="tabpanel">
-          all students
+          <h1>All students</h1>
+          <form class="form-inline" id="user-add">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInput" name="full-name" placeholder="Jane Doe">
+            <button type="submit" class="btn btn-primary">Add student</button>
+          </form>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Nr devices</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="user-list">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal fade" id="enrollment-modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Enrolling a new device</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <ol>
+                <li>Open WiFi settings in your phone</li>
+                <li>Search for WifI network with the name down below</li>
+                <li>Connect to the network using password given here</li>
+                <li>Done</li>
+              </ol>
+              <p>SSID: <span id="enrollment-ssid"></span></p>
+              <p>PASSWORD: <span id="enrollment-password"></span></p>
+              <p><span id="enrollment-countdown">60</span>s</p>
+            </div>
+          </div>
         </div>
       </div>
 

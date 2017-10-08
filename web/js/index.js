@@ -1,4 +1,5 @@
 "use strict";
+var api = 'https://tracker.wut.ee/api/v1';
 
 var colorCoding= {
   present: "success",
@@ -12,6 +13,12 @@ var flagEST= {
   absent: "Puudub",
   excused: "Põhjendatud",
   late: "Hilnenud"
+}
+var flagEN= {
+  present: "Present",
+  absent: "Absent",
+  excused: "Excused",
+  late: "Late"
 }
 
 var flags=["P", "A", "E", "L"];
@@ -35,13 +42,13 @@ function buttonGroupBuilder(){
 
 function buttonBuilder(choice){
   var lower_case_choice = choice.toLowerCase();
-  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+"' id='"+lower_case_choice+"'><input type='radio' name='flag' autocomplete='off' >"+flagEST[lower_case_choice]+"</label>"
+  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+" btn-lg' id='"+lower_case_choice+"'><input type='radio' name='flag' autocomplete='off' >"+flagEN[lower_case_choice]+"</label>"
 }
 
 function updateTable(obj){
   for (var i = 0; i < obj.length; i++){
     var container = document.getElementById(String(obj[i].user_id));
-    console.log(container);
+    //console.log(container);
     var child;
     child= container.querySelector("#present");
     $(child).removeClass("active");
@@ -51,8 +58,8 @@ function updateTable(obj){
     $(child).removeClass("active");
     child= container.querySelector("#late");
     $(child).removeClass("active");
-    console.log(obj);
-    console.log(obj.flag);
+    //console.log(obj);
+    //console.log(obj.flag);
     var child= container.querySelector("#"+obj[i].flag);
     $(child).addClass("active");
   }
@@ -62,13 +69,12 @@ class App {
 
     constructor(serverUrl) {
         this.setupBinding();
-        this.setupConnection(serverUrl);
-        this.macs = {};
         setInterval(() => {this.updateButtonState()}, 1000);
+        this.getUsers();
     }
 
     setupBinding() {          
-      fetch('https://tracker.wut.ee/api/v1/lessons/59d9efb6c25e880b6f026059')
+      fetch(api+'/lessons/59d9efb6c25e880b6f026059')
       .then(function(response) {
         return response.json()
       }).then(function(json) {
@@ -81,7 +87,7 @@ class App {
         for (var i = 0; i < obj.length; i++) {
             var tr = "<tr>";
 
-            tr += "<td>" + obj[i].full_name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i].user_id+"' >"+ buttonGroupBuilder() +"</div></td></tr>";
+            tr += "<td><h4>" + obj[i].full_name + "</h4></td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i].user_id+"' >"+ buttonGroupBuilder() +"</div></td></tr>";
 
             /* We add the table row to the table body */
             tbody.innerHTML += tr;
@@ -91,35 +97,31 @@ class App {
         console.log('parsing failed', ex)
       });
 
-    
-
+      this.user_add_el = document.getElementById('user-add');
+      this.user_add_el.addEventListener('submit', ev => {
+          ev.preventDefault();
+          let form_data = new FormData(this.user_add_el);
+          let full_name = form_data.get("full-name");
+          fetch(api+'/users',{
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  full_name: full_name
+              })
+          }).then(resp => {
+              this.getUsers();
+              this.user_add_el.reset();
+          });
+          return false;
+      })
     }
 
-    setupConnection(serverUrl) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications
-        this.ws = new WebSocket(serverUrl);
-        this.ws.onmessage = event => this.onRecv(event);
-    }
-
-    clear() {
-        this.logEl.value = "";
-    }
-
-    onSend(event) {
-        // Called to send a message
-        var finalMessage = "Nick: Message";  // this.nicknameEl.value
-        this.ws.send(finalMessage);
-    }
-
-    onRecv(event) {
-        // Called when message is received
-        var msg = JSON.parse(event.data);
-        this.macs[msg.mac] = Date.now();
-    }
         
     updateButtonState() {
       console.log("Update UI");
-      fetch('https://tracker.wut.ee/api/v1/lessons/59d9efb6c25e880b6f026059')
+      fetch(api+'/lessons/59d9efb6c25e880b6f026059')
       .then(function(response) {
         return response.json()
       }).then(function(json) {
@@ -130,6 +132,64 @@ class App {
       }).catch(function(ex) {
         console.log('parsing failed', ex)
       });
+    }
 
+    getUsers() {
+        let user_list_el = document.getElementById("user-list");
+        let user_list_innerhtml = '';
+        fetch(api+'/users').then(resp => {
+            return resp.json()
+        }).then(resp => {
+            for (let user of resp) {
+                user_list_innerhtml += `
+                    <tr>
+                      <th scope="row">${user._id}</th>
+                      <td>${user.full_name}</td>
+                      <td>${user.devices.length}</td>
+                      <td>
+                        <button class="btn btn-success" onclick="app.startEnroll('${user._id}')">Enroll new device</button>
+                      </td>
+                    </tr>
+                `
+            }
+            user_list_el.innerHTML = user_list_innerhtml;
+        })
+    }
+
+    startEnroll(userid) {
+        console.log("Enrolling new device");
+        fetch(api+'/users/'+userid+'/enrollments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(resp => {
+            return resp.json()
+        }).then(resp => {
+            $("#enrollment-modal").modal('show');
+            document.getElementById("enrollment-ssid").innerText = resp.ssid;
+            document.getElementById("enrollment-password").innerText = resp.password;
+            this._enrollment_countdown = 60;
+            this.enrollCountDown(userid);
+        })
+    }
+
+    enrollCountDown(userid) {
+        console.log(this._enrollment_countdown);
+        this._enrollment_countdown -= 1;
+        if (this._enrollment_countdown <= 0) {
+            $("#enrollment-modal").modal('hide');
+            return;
+        }
+        fetch(api+'/users/'+userid+'/enrollments').then(resp => {
+            return resp.json()
+        }).then(resp => {
+            console.log(resp);
+            if (resp.length === 0) {
+                this._enrollment_countdown = 0;
+            }
+        });
+        document.getElementById("enrollment-countdown").innerText = this._enrollment_countdown;
+        setTimeout(() => {this.enrollCountDown(userid)}, 1000);
     }
 }
