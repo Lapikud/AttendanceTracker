@@ -73,7 +73,7 @@ function updateTable(obj){
     $(child).removeClass("active");
     console.log(obj);
     console.log(obj.flag);
-    var child= container.querySelector("#"+obj.flag);
+    var child= container.querySelector("#"+obj[i].flag);
     $(child).addClass("active");
   }
 }
@@ -146,7 +146,7 @@ class App {
         return response.json()
       }).then(function(json) {
         //console.log('parsed json', json);
-        var obj= json.atendees;
+        var obj= json.attendees;
         //console.log(obj);
         updateTable(obj);
       }).catch(function(ex) {
