@@ -1,4 +1,4 @@
-from falcon import HTTPInternalServerError, HTTP_201
+from falcon import HTTPInternalServerError, HTTP_CREATED, HTTP_BAD_REQUEST
 from .models import *
 from .tools import TODOException, gen_password
 from mongoengine import DoesNotExist
@@ -10,18 +10,29 @@ class UsersResource():
     def on_get(self, req, resp, user=None):
 
         if user:
-            resp.json = User.objects.get(id=user).to_mongo()
+            user = User.objects.get(id=user)
+            devices = []
+            for device in UserDevice.objects(user=user):
+                devices.append(device.mac)
+            user = user.to_mongo()
+            user['devices'] = devices
+            resp.json = user
             return
 
         users = []
         for user in User.objects:
-            users.append(user.to_mongo())
+            devices = []
+            for device in UserDevice.objects(user=user):
+                devices.append(device.mac)
+            user = user.to_mongo()
+            user['devices'] = devices
+            users.append(user)
         resp.json = users
 
     def on_post(self, req, resp, user=None):
         user = User(email=req.json['email'], full_name=req.json['full_name'])
         user.save()
-        resp.status = HTTP_201
+        resp.status = HTTP_CREATED
 
 
 class UserDevicesResource():
@@ -64,3 +75,60 @@ class UserDeviceEnrollResource():
             "password": enroll.password,
             "ctime": enroll.ctime
         }
+
+class LessonResource():
+
+    def on_get(self, req, resp, lesson=None):
+        if lesson:
+            lesson = Lesson.objects.get(id=lesson)
+            users_in_lesson = []
+            for attending in UserInLesson.objects(lesson=lesson):
+                users_in_lesson.append({
+                    "_id":attending.id,
+                    "user_id": attending.user.id,
+                    "full_name": attending.user.full_name,
+                    "arrival_time": attending.arrival_time,
+                    "flag": attending.flag
+                })
+            lesson = lesson.to_mongo()
+            lesson["attendees"] = users_in_lesson
+            resp.json = lesson
+            return
+
+        lessons = []
+        for lesson in Lesson.objects:
+            lessons.append(lesson.to_mongo())
+        resp.json = lessons
+        return
+
+    def on_post(self, req, resp):
+        if 'name' in req.json:
+            lesson = Lesson(name=req.json['name'])
+            lesson.save()
+            resp.json = lesson.to_mongo()
+        else:
+            resp.json = {'error':'missing name key in request'}
+            resp.status = HTTP_BAD_REQUEST
+
+class LessonAttendersResource():
+
+    def on_post(self, req, resp, lesson, attending=None):
+        lesson = Lesson.objects.get(id=lesson)
+        if attending:
+            attending = UserInLesson.objects.get(id=attending)
+            if "flag" in req.json:
+                attending.flag = req.json["flag"]
+                attending.save()
+                return
+            else:
+                resp.json = {'error': 'missing flag key in request'}
+                resp.status = HTTP_BAD_REQUEST
+        else:
+            if "user" in req.json:
+                user = User.objects.get(id=req.json["user"])
+                attend = UserInLesson(user=user, lesson=lesson)
+                attend.save()
+                resp.json = attend.to_mongo()
+            else:
+                resp.json = {'error': 'missing user key in request'}
+                resp.status = HTTP_BAD_REQUEST

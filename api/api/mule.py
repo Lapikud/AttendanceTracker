@@ -65,3 +65,20 @@ def update_device_ctime():
             device.save()
         except mongoengine.DoesNotExist:
             pass
+
+def update_user_attending():
+    ws = websocket.WebSocket()
+    while True:
+        if not ws.connected:
+            print("Connecting WebSocket")
+            ws.connect("ws://iot.wut.ee/p2p/lessonsrc/lessondst")
+
+        lesson = Lesson.objects.order_by('start_time').first()
+        print(lesson.start_time, lesson.name)
+        for attender in UserInLesson.objects(lesson=lesson):
+            latest_device = UserDevice.objects(user=attender.user).order_by("mtime").only('mtime').first()
+            if not latest_device:
+                continue
+            print("", latest_device.mtime, attender.user.full_name)
+
+        time.sleep(1)
