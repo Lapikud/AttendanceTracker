@@ -55,19 +55,18 @@ function buttonGroupBuilder(){
 
 function buttonBuilder(choice){
   var lower_case_choice = choice.toLowerCase();
-  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+" id='"+lower_case_choice+"' ><input type='radio' name='flag' value='"+lower_case_choice+"' autocomplete='off' >"+flagEST[lower_case_choice]+"</label>"
+  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+"'><input type='radio' name='flag' id='"+lower_case_choice+"' value='"+lower_case_choice+"' autocomplete='off' >"+flagEST[lower_case_choice]+"</label>"
 }
 
 function updateTable(obj){
   for (var i = 0; i < obj.length; i++){
-        var container = document.getElementById(String(obj[i]._id));     
-        var child = container.querySelector("#absent");
+        var container = document.getElementById(String(obj[i]._id));
+        var child= container.querySelector("#"+obj[i]._flag);
         $(child).button("toggle");
   }
 }
 
-class App {
-  
+class App {  
 
     constructor(serverUrl) {
         this.setupBinding();
@@ -78,28 +77,12 @@ class App {
         setInterval(() => {this.updateButtonState()}, 10000);
     }
 
-    setupBinding() {
-      this.logEl = document.getElementById("log");
-      this.clearEl = document.getElementById("clear");
-      this.clearEl.addEventListener("click", event => this.clear(event));
-      this.studentsEl = document.getElementById("students");
-      for (let mac in students) {
-          let student = students[mac];
-          let el = document.createElement('div');
-          student.el = el;
-          el.style.color = 'red';
-          let name = document.createTextNode(student.name);
-          el.appendChild(name);
-          this.studentsEl.appendChild(el);
-      }
-      
-      
-      
+    setupBinding() {          
       fetch('https://tracker.wut.ee/api/v1/users')
       .then(function(response) {
         return response.json()
       }).then(function(json) {
-        console.log('parsed json', json);
+        //console.log('parsed json', json);
         var obj= json;
         var globalCounter = 0;
         var tbody = document.getElementById('tbody');
@@ -107,7 +90,7 @@ class App {
         for (var i = 0; i < obj.length; i++) {
             var tr = "<tr>";
 
-            tr += "<td>" + obj[i].full_name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i]._id+"'>"+ buttonGroupBuilder() +"</div></td></tr>";
+            tr += "<td>" + obj[i].full_name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i]._id+"' >"+ buttonGroupBuilder() +"</div></td></tr>";
 
             /* We add the table row to the table body */
             tbody.innerHTML += tr;
@@ -142,30 +125,7 @@ class App {
         var msg = JSON.parse(event.data);
         this.macs[msg.mac] = Date.now();
     }
-
-    updateVisibleMacs() {
-        console.log("Update UI");
-        let macs = "";
-        let date = Date.now();
-        for (let mac in this.macs) {
-            let lastSeen = (date - this.macs[mac])
-            if (lastSeen > 1000 * 60 * 10) {
-                delete this.macs[mac];
-                if (mac in students){
-                    let student = students[mac];
-                    student.el.style.color = 'red';
-                }
-                continue;
-            }
-            if (mac in students){
-                let student = students[mac];
-                student.el.style.color = 'green';
-            }
-            macs += mac + ' ' + ((date - this.macs[mac]) / 1000).toFixed(1) + '\n';
-        }
-        this.logEl.value = macs;
-    }
-    
+        
     updateButtonState() {
       console.log("Update UI");
       fetch('https://tracker.wut.ee/api/v1/users')
