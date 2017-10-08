@@ -148,6 +148,7 @@ class App {
                       <td>${user.devices.length}</td>
                       <td>
                         <button class="btn btn-success" onclick="app.startEnroll('${user._id}')">Enroll new device</button>
+                        <button class="btn btn-primary" onclick="app.addToClass('${user._id}')">Add to class</button>
                       </td>
                     </tr>
                 `
@@ -191,5 +192,20 @@ class App {
         });
         document.getElementById("enrollment-countdown").innerText = this._enrollment_countdown;
         setTimeout(() => {this.enrollCountDown(userid)}, 1000);
+    }
+
+    addToClass(userid) {
+        fetch(api+'/lessons/59d9efb6c25e880b6f026059/attending',{
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  user: userid
+              })
+          }).then(resp => {
+              this.getUsers();
+              this.user_add_el.reset();
+          });
     }
 }

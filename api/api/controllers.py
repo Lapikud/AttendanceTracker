@@ -32,6 +32,9 @@ class UsersResource():
     def on_post(self, req, resp, user=None):
         user = User(email=req.json.get('email'), full_name=req.json['full_name'])
         user.save()
+        lesson = Lesson.objects.get(id='59d9efb6c25e880b6f026059')
+        attend = UserInLesson(user=user, lesson=lesson)
+        attend.save()
         resp.status = HTTP_CREATED
 
 
@@ -63,7 +66,7 @@ class UserDeviceEnrollResource():
         user = User.objects.get(id=user)
         enroll = DeviceEnrollmentRequest(user=user)
         enroll.ssid = user.full_name
-        enroll.password = gen_password(length=8)
+        enroll.password = "12345678"#gen_password(length=8)
         enroll.save()
         ws = create_connection("ws://iot.wut.ee/p2p/browser/manage")
         ws.send(json.dumps({"method":"enroll", "params":{"ssid":enroll.ssid, "password":enroll.password, "id":str(enroll.id)}}))
