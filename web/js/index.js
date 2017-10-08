@@ -10,14 +10,14 @@ var students = {
     "2c:f0:a2:c3:af:b8": {name:"Berta Härsing"}
 }
 var studentJSON = [
-    {id: "1", name: "Arti Zirk", flag: "A"},
+    {id: "1", name: "Arti Zirk", flag: "L"},
     {id: "2", name: "Kertu Pikk", flag: "A"},
     {id: "3", name: "Sigrid Kirss", flag: "A"},
-    {id: "4", name: "Silver Valdvee", flag: "A"},
+    {id: "4", name: "Silver Valdvee", flag: "E"},
     {id: "5", name: "Artur Salus", flag: "A"},
     {id: "6", name: "Alo Avi", flag: "A"},
     {id: "7", name: "Kristjan Kool", flag: "A"},
-    {id: "8", name: "Berta Härsing", flag: "A"}
+    {id: "8", name: "Berta Härsing", flag: "L"}
 ]
 
 var colorCoding= {
@@ -27,8 +27,16 @@ var colorCoding= {
   late: "warning"
 }
 
+var flagEST= {
+  present: "Kohal",
+  absent: "Puudub",
+  excused: "Põhjendatud",
+  late: "Hilnenud"
+}
+
 var flags=["P", "A", "E", "L"];
 var flagsToString={"P": "Present", "A": "Absent", "E": "Excused", "L": "Late"};
+var flagsToLong={"P": "present", "A": "absent", "E": "excused", "L": "late"};
 
 function isActive(bool){
   if(bool){ 
@@ -38,17 +46,24 @@ function isActive(bool){
        }
 }
 
-function buttonGroupBuilder(flag){
+function buttonGroupBuilder(){
   var buttons = "";
   for(var i=0; i< flags.length; i++)
-    if(flag==flags[i]) buttons += buttonBuilder(flagsToString[flag], flag)
-    else buttons += buttonBuilder(flagsToString[flags[i]])
+    buttons += buttonBuilder(flagsToString[flags[i]])
   return buttons;
 }
 
-function buttonBuilder(choice, flag){
+function buttonBuilder(choice){
   var lower_case_choice = choice.toLowerCase();
-  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+"' id='"+lower_case_choice+"' ><input type='checkbox' autocomplete='off'>"+choice+"</label>"
+  return "<label class='btn btn-outline-"+colorCoding[lower_case_choice]+" id='"+lower_case_choice+"' ><input type='radio' name='flag' value='"+lower_case_choice+"' autocomplete='off' >"+flagEST[lower_case_choice]+"</label>"
+}
+
+function updateTable(obj){
+  for (var i = 0; i < obj.length; i++){
+        var container = document.getElementById(String(obj[i]._id));     
+        var child = container.querySelector("#absent");
+        $(child).button("toggle");
+  }
 }
 
 class App {
@@ -58,8 +73,9 @@ class App {
         this.setupBinding();
         this.setupConnection(serverUrl);
         this.macs = {};
-        setInterval(() => {this.updateVisibleMacs()}, 1000);
-        setInterval(() => {this.updateButtonState()}, 1000);
+        //setInterval(() => {this.updateVisibleMacs()}, 1000);
+        
+        setInterval(() => {this.updateButtonState()}, 10000);
     }
 
     setupBinding() {
@@ -77,18 +93,32 @@ class App {
           this.studentsEl.appendChild(el);
       }
       
-      var obj = studentJSON;
-      var globalCounter = 0;
-      var tbody = document.getElementById('tbody');
+      
+      
+      fetch('https://tracker.wut.ee/api/v1/users')
+      .then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        console.log('parsed json', json);
+        var obj= json;
+        var globalCounter = 0;
+        var tbody = document.getElementById('tbody');
 
-      for (var i = 0; i < obj.length; i++) {
-          var tr = "<tr>";
+        for (var i = 0; i < obj.length; i++) {
+            var tr = "<tr>";
 
-          tr += "<td>" + obj[i].name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i].id+"'>"+ buttonGroupBuilder(obj[i].flag) +"</div></td></tr>";
+            tr += "<td>" + obj[i].full_name + "</td><td><div class='btn-group' data-toggle='buttons' id='"+obj[i]._id+"'>"+ buttonGroupBuilder() +"</div></td></tr>";
 
-          /* We add the table row to the table body */
-          tbody.innerHTML += tr;
-      }
+            /* We add the table row to the table body */
+            tbody.innerHTML += tr;
+        }
+        
+      }).catch(function(ex) {
+        console.log('parsing failed', ex)
+      });
+
+    
+
     }
 
     setupConnection(serverUrl) {
@@ -137,7 +167,17 @@ class App {
     }
     
     updateButtonState() {
-    //to-do
-    }
+      console.log("Update UI");
+      fetch('https://tracker.wut.ee/api/v1/users')
+      .then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        //console.log('parsed json', json);
+        var obj= json;
+        updateTable(obj);
+      }).catch(function(ex) {
+        console.log('parsing failed', ex)
+      });
 
+    }
 }
